@@ -2,16 +2,17 @@ import React from 'react'
 
 const Gallery = () => {
   return (
-    <section className="py-32 bg-[#0A0A0B]" id="galeria">
+    <section className="py-32" id="galeria" style={{ background: 'linear-gradient(180deg, #0A0A0B 0%, #0d1520 50%, #0A0A0B 100%)' }}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16">
           <div>
             <span className="font-label-md text-label-md text-[#FF5F1F] tracking-[0.2em] uppercase mb-4 block">
               Nuestro trabajo
             </span>
-            <h2 className="font-headline-lg text-headline-lg tracking-tighter">
+            <h2 className="font-headline-lg text-headline-lg tracking-tighter mb-6">
               Galería del Taller
             </h2>
+            <div style={{ width: '60px', height: '3px', background: 'linear-gradient(90deg, #FF5F1F, #adc7ff)', borderRadius: '2px', marginBottom: '1.5rem' }}></div>
           </div>
           <div className="mt-6 md:mt-0">
             <p className="text-[#8B90A0] text-body-md max-w-sm">
