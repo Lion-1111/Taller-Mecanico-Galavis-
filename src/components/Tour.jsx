@@ -1,8 +1,34 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 const Tour = () => {
+  const videoRef = useRef(null)
+  const sectionRef = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && videoRef.current) {
+          videoRef.current.play().catch(err => console.log('Autoplay prevented:', err))
+        } else if (videoRef.current) {
+          videoRef.current.pause()
+        }
+      },
+      { threshold: 0.5 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
+      }
+    }
+  }, [])
+
   return (
-    <section className="py-32 bg-[#1C1C1E] border-y border-[#2C2C2E]" id="taller">
+    <section className="py-32 bg-[#1C1C1E] border-y border-[#2C2C2E]" id="taller" ref={sectionRef}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-10">
           <span className="font-label-md text-[#8B90A0] tracking-[0.2em] uppercase mb-4 block" style={{ fontSize: '12px' }}>
@@ -14,9 +40,11 @@ const Tour = () => {
         </div>
         <div className="relative max-w-3xl mx-auto rounded-2xl overflow-hidden border border-[#2C2C2E] shadow-2xl bg-black">
           <video 
+            ref={videoRef}
             className="w-full h-auto block"
             controls
             playsInline
+            muted
             preload="metadata"
             poster="/media/taller_completo.jpg"
           >
