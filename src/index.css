@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: #2C2C2E;
+  }
+
+  html {
+    background-color: #0A0A0B;
+  }
+
+  body {
+    background-color: #0A0A0B;
+    color: #E0E2ED;
+    font-family: 'Inter', sans-serif;
+  }
+
+  ::selection {
+    background-color: #007BFF;
+    color: #002E68;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined { 
+    font-family: "Material Symbols Outlined"; 
+    font-weight: normal; 
+    font-style: normal; 
+    font-size: 24px; 
+    line-height: 1; 
+    letter-spacing: normal; 
+    text-transform: none; 
+    display: inline-block; 
+    white-space: nowrap; 
+    word-wrap: normal; 
+    direction: ltr; 
+    -webkit-font-feature-settings: "liga"; 
+    -webkit-font-smoothing: antialiased; 
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; 
+  } 
+  
+  .glass-panel { 
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(12px); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+  } 
+  
+  .grid-pattern-bg { 
+    background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.05) 1px, transparent 0); 
+    background-size: 24px 24px; 
+  } 
+  
+  @keyframes pathMove { 
+    0% { stroke-dashoffset: 1000; opacity: 0.3; } 
+    50% { opacity: 0.6; } 
+    100% { stroke-dashoffset: 0; opacity: 0.3; } 
+  } 
+  .moving-path { 
+    stroke-dasharray: 1000; 
+    animation: pathMove 20s linear infinite; 
+  } 
+  
+  .hero-radial-glow { 
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 110%, #1a3a6e 0%, transparent 65%), 
+      #0A0A0B; 
+  } 
+  .hero-grain { 
+    position: absolute; 
+    inset: 0; 
+    pointer-events: none; 
+    opacity: 0.04; 
+    mix-blend-mode: overlay; 
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); 
+  } 
+  
+  .form-input { 
+    width: 100%; 
+    background-color: #0A0A0B; 
+    border: 1px solid #2C2C2E; 
+    color: #E0E2ED; 
+    padding: 0.75rem 1rem; 
+    border-radius: 0.5rem; 
+    font-size: 14px; 
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; 
+  } 
+  .form-input:focus { 
+    outline: none; 
+    border-color: #007BFF; 
+    box-shadow: 0 0 0 3px color-mix(in oklab, #007BFF 25%, transparent); 
+  } 
+  .form-input::placeholder { 
+    color: #8B90A0; 
+  } 
+}
