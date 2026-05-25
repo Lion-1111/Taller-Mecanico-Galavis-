@@ -18,7 +18,7 @@ const Contact = () => {
   const phone = "2281113715"
   
   return (
-    <section className="py-32 bg-[#1C1C1E] border-y border-[#2C2C2E]" id="contacto">
+    <section className="py-32 border-y border-[#2C2C2E]" id="contacto" style={{ background: 'linear-gradient(180deg, #0A0A0B 0%, #080e18 50%, #0A0A0B 100%)' }}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <div>
