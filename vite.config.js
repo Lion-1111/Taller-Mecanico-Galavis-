@@ -24,7 +24,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'material-icons': ['@material-symbols/webfont'],
         },
       },
     },
