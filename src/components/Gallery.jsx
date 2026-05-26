@@ -158,6 +158,7 @@ const Gallery = () => {
                     <img 
                       src={foto.img}
                       alt={foto.caption}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 hover:brightness-100 brightness-[0.92]"
                     />
                     <div className={`absolute top-0 left-0 px-2 py-1 text-[8px] md:px-[14px] md:py-2 md:text-[9px] font-semibold tracking-[0.18em] uppercase z-2 ${

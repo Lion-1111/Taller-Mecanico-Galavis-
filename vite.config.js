@@ -12,4 +12,22 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'material-icons': ['@material-symbols/webfont'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 })
