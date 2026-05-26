@@ -9,12 +9,14 @@ const Gallery = () => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('visible')
-          entry.target.classList.remove('opacity-0', 'translate-y-6')
+          requestAnimationFrame(() => {
+            entry.target.classList.add('visible')
+            entry.target.classList.remove('opacity-0', 'translate-y-6')
+          })
           observer.unobserve(entry.target)
         }
       })
-    }, { threshold: 0.1 })
+    }, { threshold: 0.1, rootMargin: '50px' })
 
     itemsRef.current.forEach(item => {
       if (item) observer.observe(item)
@@ -130,12 +132,12 @@ const Gallery = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-[80px]">
+        <div className="flex flex-col gap-[60px]">
           {trabajos.map((trabajo, index) => (
             <div 
               key={index}
               ref={el => itemsRef.current[index] = el}
-              className="trabajo transition-all duration-700"
+              className="trabajo transition-all duration-500 will-change-transform"
             >
               <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-5 flex-wrap gap-2">
                 <div>
@@ -159,7 +161,7 @@ const Gallery = () => {
                       src={foto.img}
                       alt={foto.caption}
                       loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 hover:brightness-100 brightness-[0.92]"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105 hover:brightness-100 brightness-[0.92]"
                     />
                     <div className={`absolute top-0 left-0 px-2 py-1 text-[8px] md:px-[14px] md:py-2 md:text-[9px] font-semibold tracking-[0.18em] uppercase z-2 ${
                       foto.badge === 'badge-antes' ? 'bg-[rgba(230,51,41,0.9)] text-white' :
