@@ -69,7 +69,7 @@ const Contact = () => {
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <a 
-                href="https://maps.google.com/?q=Galaviz+Automotriz+Teziutl%C3%A1n"
+                href="https://maps.google.com/?q=19.8105,-97.379361"
                 target="_blank"
                 rel="noreferrer"
                 className="glass-panel p-6 rounded-xl text-center shadow-2xl border-[#adc7ff]/30 hover:scale-105 transition-transform"

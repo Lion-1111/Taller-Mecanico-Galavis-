@@ -36,7 +36,7 @@ const About = () => {
                 alt="Dueño de Galaviz Automotriz trabajando en una camioneta"
                 loading="lazy"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src="/media/dueno_trabajando.jpg"
+                src="/media/teziutlan_puebla.jpg"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0B]/80 to-transparent"></div>
             </div>

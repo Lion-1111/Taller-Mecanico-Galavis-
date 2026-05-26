@@ -1,20 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-const Gallery = () => {
+const GalleryNew = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxImage, setLightboxImage] = useState('')
   const itemsRef = useRef([])
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+      entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('visible')
-          entry.target.classList.remove('opacity-0', 'translate-y-6')
+          setTimeout(() => {
+            entry.target.classList.add('visible')
+          }, i * 100)
           observer.unobserve(entry.target)
         }
       })
-    }, { threshold: 0.1 })
+    }, { threshold: 0.08 })
 
     itemsRef.current.forEach(item => {
       if (item) observer.observe(item)
@@ -110,23 +111,20 @@ const Gallery = () => {
   return (
     <section className="py-32" id="galeria" style={{ background: 'linear-gradient(180deg, #0A0A0B 0%, #0d1520 50%, #0A0A0B 100%)' }}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-start mb-12">
-          <div className="flex-1">
-            <span className="font-label-md text-label-md text-[#FF5F1F] tracking-[0.2em] uppercase mb-3 block">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+          <div>
+            <span className="font-label-md text-label-md text-[#FF5F1F] tracking-[0.2em] uppercase mb-4 block">
               Nuestro trabajo
             </span>
-            <h2 className="font-headline-lg text-headline-lg tracking-tighter mb-4">
+            <h2 className="font-headline-lg text-headline-lg tracking-tighter mb-6">
               Galería del Taller
             </h2>
-            <div style={{ width: '60px', height: '3px', background: 'linear-gradient(90deg, #FF5F1F, #adc7ff)', borderRadius: '2px', marginBottom: '1rem' }}></div>
-            <div className="mt-4">
-              <h3 className="font-['Anton'] text-[clamp(18px,4vw,24px)] tracking-[0.02em] uppercase leading-none mb-2">
-                Josué <span className="text-[#FF5F1F]">Galavic</span> Rosas
-              </h3>
-              <p className="text-[#8B90A0] text-[11px] md:text-body-sm leading-relaxed max-w-md">
-                Especialista en mecánica automotriz. Reparaciones mayores de motor, distribución, suspensión y mantenimiento preventivo. Tu auto en manos de alguien que sabe lo que hace.
-              </p>
-            </div>
+            <div style={{ width: '60px', height: '3px', background: 'linear-gradient(90deg, #FF5F1F, #adc7ff)', borderRadius: '2px', marginBottom: '1.5rem' }}></div>
+          </div>
+          <div className="mt-6 md:mt-0">
+            <p className="text-[#8B90A0] text-body-md max-w-sm">
+              Cada trabajo refleja nuestro compromiso con la calidad y el detalle técnico.
+            </p>
           </div>
         </div>
 
@@ -135,7 +133,7 @@ const Gallery = () => {
             <div 
               key={index}
               ref={el => itemsRef.current[index] = el}
-              className="trabajo transition-all duration-700"
+              className="trabajo opacity-0 translate-y-6 transition-all duration-700"
             >
               <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-5 flex-wrap gap-2">
                 <div>
@@ -148,11 +146,11 @@ const Gallery = () => {
                 </div>
               </div>
 
-              <div className={`${getGridClass(trabajo.grid)} grid-cols-2 gap-2 md:gap-[3px]`}>
+              <div className={getGridClass(trabajo.grid)}>
                 {trabajo.fotos.map((foto, fotoIndex) => (
                   <div 
                     key={fotoIndex}
-                    className={`relative overflow-hidden bg-[#1a1a1a] cursor-zoom-in rounded-lg ${foto.height === 'tall' ? 'h-[200px] md:h-[420px]' : foto.height === 'short' ? 'h-[140px] md:h-[220px]' : 'h-[180px] md:h-[300px]'}`}
+                    className={`relative overflow-hidden bg-[#1a1a1a] cursor-zoom-in ${foto.height === 'tall' ? 'h-[420px]' : foto.height === 'short' ? 'h-[220px]' : 'h-[300px]'}`}
                     onClick={() => openLightbox(foto.img)}
                   >
                     <img 
@@ -160,14 +158,14 @@ const Gallery = () => {
                       alt={foto.caption}
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 hover:brightness-100 brightness-[0.92]"
                     />
-                    <div className={`absolute top-0 left-0 px-2 py-1 text-[8px] md:px-[14px] md:py-2 md:text-[9px] font-semibold tracking-[0.18em] uppercase z-2 ${
+                    <div className={`absolute top-0 left-0 px-[14px] py-2 text-[9px] font-semibold tracking-[0.18em] uppercase z-2 ${
                       foto.badge === 'badge-antes' ? 'bg-[rgba(230,51,41,0.9)] text-white' :
                       foto.badge === 'badge-despues' ? 'bg-[rgba(20,20,20,0.85)] text-[#4dff91] border-b-2 border-[#4dff91]' :
                       'bg-[rgba(20,20,20,0.85)] text-[#ffd84d] border-b-2 border-[#ffd84d]'
                     }`}>
                       {foto.badgeText}
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 md:px-[14px] md:py-2.5 text-[9px] md:text-[11px] text-[rgba(240,236,230,0.7)] bg-gradient-to-t from-black/70 to-transparent font-light">
+                    <div className="absolute bottom-0 left-0 right-0 px-[14px] py-2.5 text-[11px] text-[rgba(240,236,230,0.7)] bg-gradient-to-t from-black/70 to-transparent font-light">
                       {foto.caption}
                     </div>
                   </div>
@@ -201,4 +199,4 @@ const Gallery = () => {
   )
 }
 
-export default Gallery
+export default GalleryNew
