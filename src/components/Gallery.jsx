@@ -1,53 +1,57 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useRef, useState } from 'react'
 
 /* ─── Before/After Slider ─────────────────────────────────────────── */
 const BeforeAfterSlider = ({ imgBefore, imgAfter, labelBefore = 'ANTES', labelAfter = 'DESPUÉS' }) => {
   const [pos, setPos] = useState(50)
   const containerRef = useRef(null)
-  const dragging = useRef(false)
+  const isDragging = useRef(false)
+  const rafId = useRef(null)
+  const pendingX = useRef(null)
 
-  const getPos = (clientX) => {
+  const calcPos = (clientX) => {
     const rect = containerRef.current.getBoundingClientRect()
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width))
     return (x / rect.width) * 100
   }
 
-  const onMouseDown = (e) => { e.preventDefault(); dragging.current = true }
-  const onTouchStart = () => { dragging.current = true }
-
-  const onMouseMove = useCallback((e) => {
-    if (!dragging.current) return
-    setPos(getPos(e.clientX))
-  }, [])
-
-  const onTouchMove = useCallback((e) => {
-    if (!dragging.current) return
-    setPos(getPos(e.touches[0].clientX))
-  }, [])
-
-  const stopDrag = useCallback(() => { dragging.current = false }, [])
-
-  useEffect(() => {
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', stopDrag)
-    window.addEventListener('touchmove', onTouchMove, { passive: true })
-    window.addEventListener('touchend', stopDrag)
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', stopDrag)
-      window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', stopDrag)
+  const flush = () => {
+    if (pendingX.current !== null) {
+      setPos(calcPos(pendingX.current))
+      pendingX.current = null
     }
-  }, [onMouseMove, onTouchMove, stopDrag])
+    rafId.current = null
+  }
+
+  const onPointerDown = (e) => {
+    isDragging.current = true
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const onPointerMove = (e) => {
+    if (!isDragging.current) return
+    pendingX.current = e.clientX
+    if (!rafId.current) rafId.current = requestAnimationFrame(flush)
+  }
+
+  const onPointerUp = () => {
+    isDragging.current = false
+    if (rafId.current) { cancelAnimationFrame(rafId.current); rafId.current = null }
+  }
 
   return (
     <div
       ref={containerRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
       style={{
         position: 'relative', width: '100%', aspectRatio: '16/9',
         overflow: 'hidden', borderRadius: '6px',
-        cursor: 'col-resize', userSelect: 'none', touchAction: 'none',
+        cursor: 'col-resize', userSelect: 'none',
+        touchAction: 'pan-y',  /* permite scroll vertical libremente */
         background: '#111',
+        willChange: 'transform',
       }}
     >
       {/* Hint bar */}
@@ -65,56 +69,51 @@ const BeforeAfterSlider = ({ imgBefore, imgAfter, labelBefore = 'ANTES', labelAf
       <img src={imgAfter} alt={labelAfter} draggable={false}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
 
-      {/* Before image (clipped) */}
-      <div style={{ position: 'absolute', inset: 0, width: `${pos}%`, overflow: 'hidden' }}>
-        <img src={imgBefore} alt={labelBefore} draggable={false}
-          style={{
-            position: 'absolute', inset: 0,
-            width: containerRef.current?.offsetWidth || '100%',
-            maxWidth: 'none', height: '100%', objectFit: 'cover',
-          }} />
-      </div>
+      {/* Before image (clipped con clip-path — GPU) */}
+      <img src={imgBefore} alt={labelBefore} draggable={false}
+        style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover',
+          clipPath: `inset(0 ${100 - pos}% 0 0)`,
+        }} />
 
       {/* Divider */}
       <div style={{
-        position: 'absolute', top: 0, bottom: 0, left: `${pos}%`,
-        transform: 'translateX(-50%)', width: '1px',
-        background: 'rgba(255,255,255,0.6)', zIndex: 5, pointerEvents: 'none',
+        position: 'absolute', top: 0, bottom: 0,
+        left: `${pos}%`, transform: 'translateX(-50%)',
+        width: '1px', background: 'rgba(255,255,255,0.6)',
+        zIndex: 5, pointerEvents: 'none',
       }} />
 
       {/* Handle */}
-      <div
-        onMouseDown={onMouseDown}
-        onTouchStart={onTouchStart}
-        style={{
-          position: 'absolute', top: '50%', left: `${pos}%`,
-          transform: 'translate(-50%, -50%)',
-          width: '36px', height: '36px', borderRadius: '50%',
-          background: '#fff', zIndex: 6, cursor: 'col-resize',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
-        }}
-      >
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+      <div style={{
+        position: 'absolute', top: '50%', left: `${pos}%`,
+        transform: 'translate(-50%, -50%)',
+        width: '34px', height: '34px', borderRadius: '50%',
+        background: '#fff', zIndex: 6, cursor: 'col-resize',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.45)', pointerEvents: 'none',
+      }}>
+        <svg width="13" height="9" viewBox="0 0 14 10" fill="none">
           <path d="M1 5H13M1 5L4 2M1 5L4 8M13 5L10 2M13 5L10 8" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
 
       {/* Badges */}
       <div style={{
-        position: 'absolute', top: '12px', left: '12px', zIndex: 7,
-        background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.85)',
-        fontSize: '9px', fontWeight: '600', letterSpacing: '0.14em',
-        padding: '3px 9px', borderRadius: '3px', textTransform: 'uppercase',
-        backdropFilter: 'blur(6px)',
+        position: 'absolute', top: '10px', left: '10px', zIndex: 7,
+        background: 'rgba(0,0,0,0.55)', color: 'rgba(255,255,255,0.8)',
+        fontSize: '9px', fontWeight: '600', letterSpacing: '0.13em',
+        padding: '3px 8px', borderRadius: '3px', textTransform: 'uppercase',
+        backdropFilter: 'blur(4px)', pointerEvents: 'none',
       }}>{labelBefore}</div>
 
       <div style={{
-        position: 'absolute', top: '12px', right: '12px', zIndex: 7,
-        background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.85)',
-        fontSize: '9px', fontWeight: '600', letterSpacing: '0.14em',
-        padding: '3px 9px', borderRadius: '3px', textTransform: 'uppercase',
-        backdropFilter: 'blur(6px)',
+        position: 'absolute', top: '10px', right: '10px', zIndex: 7,
+        background: 'rgba(0,0,0,0.55)', color: 'rgba(255,255,255,0.8)',
+        fontSize: '9px', fontWeight: '600', letterSpacing: '0.13em',
+        padding: '3px 8px', borderRadius: '3px', textTransform: 'uppercase',
+        backdropFilter: 'blur(4px)', pointerEvents: 'none',
       }}>{labelAfter}</div>
     </div>
   )
@@ -127,6 +126,7 @@ const PhotoGrid = ({ fotos, onOpen }) => (
     gridTemplateColumns: 'repeat(2, 1fr)',
     gap: '4px',
     marginTop: '4px',
+    contain: 'layout',
   }}>
     {fotos.map((f, i) => (
       <div
@@ -138,10 +138,11 @@ const PhotoGrid = ({ fotos, onOpen }) => (
           background: '#111', aspectRatio: '4/3',
         }}
       >
-        <img src={f.img} alt={f.caption || ''} loading="lazy"
+        <img src={f.img} alt={f.caption || ''} loading="lazy" decoding="async"
           style={{
             width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-            transition: 'transform 0.4s ease',
+            transition: 'transform 0.35s ease',
+            willChange: 'transform',
           }}
           onMouseEnter={e => { e.target.style.transform = 'scale(1.04)' }}
           onMouseLeave={e => { e.target.style.transform = 'scale(1)' }}
@@ -149,10 +150,10 @@ const PhotoGrid = ({ fotos, onOpen }) => (
         {f.caption && (
           <div style={{
             position: 'absolute', bottom: 0, left: 0, right: 0,
-            padding: '20px 10px 6px',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.65), transparent)',
-            fontSize: '10px', color: 'rgba(255,255,255,0.6)',
-            letterSpacing: '0.02em',
+            padding: '18px 10px 6px',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+            fontSize: '10px', color: 'rgba(255,255,255,0.55)',
+            letterSpacing: '0.02em', pointerEvents: 'none',
           }}>{f.caption}</div>
         )}
       </div>
