@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 /* ─── Before/After Slider ─────────────────────────────────────────── */
 const BeforeAfterSlider = ({ imgBefore, imgAfter, labelBefore = 'ANTES', labelAfter = 'DESPUÉS' }) => {
@@ -105,7 +105,7 @@ const BeforeAfterSlider = ({ imgBefore, imgAfter, labelBefore = 'ANTES', labelAf
         background: 'rgba(0,0,0,0.55)', color: 'rgba(255,255,255,0.8)',
         fontSize: '9px', fontWeight: '600', letterSpacing: '0.13em',
         padding: '3px 8px', borderRadius: '3px', textTransform: 'uppercase',
-        backdropFilter: 'blur(4px)', pointerEvents: 'none',
+        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', pointerEvents: 'none',
       }}>{labelBefore}</div>
 
       <div style={{
@@ -113,7 +113,7 @@ const BeforeAfterSlider = ({ imgBefore, imgAfter, labelBefore = 'ANTES', labelAf
         background: 'rgba(0,0,0,0.55)', color: 'rgba(255,255,255,0.8)',
         fontSize: '9px', fontWeight: '600', letterSpacing: '0.13em',
         padding: '3px 8px', borderRadius: '3px', textTransform: 'uppercase',
-        backdropFilter: 'blur(4px)', pointerEvents: 'none',
+        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', pointerEvents: 'none',
       }}>{labelAfter}</div>
     </div>
   )
